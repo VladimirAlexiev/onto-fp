@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Ontotext Framework Projects Timeline</title>
+  </head>
+  <body>
+    <div id="visualization"/>
+    <script type="text/javascript">
+      // https://developers.google.com/chart/interactive/docs/gallery/barchart
+      // TODO: use Material bar chart, simplify loading, simplify tooltip by using role:tooltip instead of callback
+	    var scr = document.createElement("script");
+      scr.setAttribute("src",'https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1","packages":["corechart"],"callback":"drawVisualization"}]}');
+      document.head.appendChild(scr);	
+      
+      function drawVisualization() {
+        // To see the data that this visualization uses, browse to
+        // http://spreadsheets.google.com/ccc?key=0ArBFygWDV2_PdF9BOUx2N3hyZldRVG1KT0tBcm9Dbmc
+        var query = new google.visualization.Query(
+          'http://spreadsheets.google.com/tq?key=0ArBFygWDV2_PdF9BOUx2N3hyZldRVG1KT0tBcm9Dbmc&range=B1:N46');
+        // Send the query with a callback function.
+        query.send(handleQueryResponse);
+      }
+
+      function handleQueryResponse(response) {
+        if (response.isError()) {
+          alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+          return;
+        }
+        var data = response.getDataTable();
+        data.setColumnProperties(1,{role: 'tooltip', html: true}); // MUST come right after the domain (acronym) column
+
+        // compute tooltip
+        var tooltipFormat = new google.visualization.PatternFormat(
+          // {0} acronym, {1} start, {2} finish, {3} program, {4} name, {5} logo
+          '<table border="0" width="600px" style="font-family: RobotoRegular, Arial; font-size: 1.2em"><tr valign="middle"><td width="200px"><img src="{5}" height="90px"/></td><td><b>{0} ({3})</b><br/>{4}<br/>'
+            + '<b>Start</b> {1}, <b>Finish</b> {2}</td></tr></table>'
+        );
+        tooltipFormat.format(data, [0,4,5,6,8,10], 1);
+
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0,1,2,3]); // rest are used only for the tooltip
+
+        var options = {
+          width: 610, height: 740,
+          theme: 'maximized', 
+          bar: {groupWidth: "80%"},
+          legend: {position: 'none'},
+          hAxis: {viewWindow: {min: 1998, max: 2022}, viewWindowMode: 'explicit', gridlines: {count: 13},
+                  format: '####', textStyle: {fontFamily: "RobotoRegular, Arial", fontSize: 12}},
+          vAxis: {textStyle: {fontFamily: "RobotoRegular, Arial"}}, // bold: true
+          colors: ['white','#f04e23'], // START bar rendered with the background color
+          focusTarget: 'category',
+          tooltip: {isHtml: true}, // render tooltips using HTML not SVG
+          isStacked: true
+        };
+
+        function selectHandler() {
+          var selection = visualization.getSelection()[0];
+          // websites: 9 ontotext, 12 project, 11 cordis
+          var url = data.getValue(selection.row,9) || data.getValue(selection.row,12) || data.getValue(selection.row,11);
+          if (url) {window.open(url,'_new')}
+        }
+
+        visualization = new google.visualization.BarChart(document.getElementById('visualization'));
+        google.visualization.events.addListener(visualization, 'select', selectHandler);
+        visualization.draw(view, options);
+      }
+    </script>
+  </body>
+</html>
