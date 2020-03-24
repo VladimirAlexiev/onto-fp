@@ -14,8 +14,7 @@
       document.head.appendChild(scr);	
       
       function drawVisualization() {
-        // To see the data that this visualization uses, browse to
-        // http://spreadsheets.google.com/ccc?key=0ArBFygWDV2_PdF9BOUx2N3hyZldRVG1KT0tBcm9Dbmc
+        // To edit the data that this visualization uses: https://docs.google.com/spreadsheets/d/1qRQbDVlRXrH4g8wcgZai65Zjn7D3N1mL-rIIzUoXmlk/edit
         var query = new google.visualization.Query(
           'http://spreadsheets.google.com/tq?key=0ArBFygWDV2_PdF9BOUx2N3hyZldRVG1KT0tBcm9Dbmc&range=B1:N46');
         // Send the query with a callback function.
@@ -42,11 +41,11 @@
         view.setColumns([0,1,2,3]); // rest are used only for the tooltip
 
         var options = {
-          width: 610, height: 740,
+          width: 660, height: 740,
           theme: 'maximized', 
           bar: {groupWidth: "80%"},
           legend: {position: 'none'},
-          hAxis: {viewWindow: {min: 1998, max: 2022}, viewWindowMode: 'explicit', gridlines: {count: 13},
+          hAxis: {viewWindow: {min: 1998, max: 2024}, viewWindowMode: 'explicit', gridlines: {count: 13},
                   format: '####', textStyle: {fontFamily: "RobotoRegular, Arial", fontSize: 12}},
           vAxis: {textStyle: {fontFamily: "RobotoRegular, Arial"}}, // bold: true
           colors: ['white','#f04e23'], // START bar rendered with the background color
